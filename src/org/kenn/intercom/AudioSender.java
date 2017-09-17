@@ -1,3 +1,4 @@
+package org.kenn.intercom;
 import javax.sound.sampled.*;
 import java.io.*;
 import java.net.*;
@@ -38,13 +39,13 @@ public class AudioSender implements Runnable {
 		}
 	}
 	
-	void setSpeak(boolean b) {
-		speak = b;
-	}
-	
-	boolean getSpeak() {
-		return speak;
-	}
+		public void setEnable(boolean b) {
+			if(speak&&!b) speak = b;
+		}
+		
+		public boolean isEnable() {
+			return speak;
+		}
 
 	@Override
 	public void run() {

@@ -1,3 +1,4 @@
+package org.kenn.intercom;
 import java.awt.EventQueue;
 import java.util.Scanner;
 
@@ -67,7 +68,6 @@ public class IntercomClient {
 				
 				ast = new Thread(as);
 				ast.start();
-				as.setSpeak(true);
 			}
 		});
 		panel.add(btnConnect);
@@ -76,12 +76,12 @@ public class IntercomClient {
 		btnSpeak.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if(!as.getSpeak()) as.setSpeak(true);
+				as.setEnable(true);
 				
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if(as.getSpeak()) as.setSpeak(false);
+				as.setEnable(false);
 			}
 		});
 		frame.getContentPane().add(btnSpeak, BorderLayout.CENTER);
