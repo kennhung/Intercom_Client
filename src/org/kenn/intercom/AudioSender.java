@@ -40,7 +40,7 @@ public class AudioSender implements Runnable {
 	}
 	
 		public void setEnable(boolean b) {
-			if(speak&&!b) speak = b;
+			if(speak!=b) speak = b;
 		}
 		
 		public boolean isEnable() {
