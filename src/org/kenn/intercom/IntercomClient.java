@@ -14,6 +14,8 @@ import javax.swing.JLabel;
 public class IntercomClient {
 	AudioSender as;
 	Thread ast;
+	InformationSocket is;
+	Thread ist;
 
 	private JFrame frame;
 	private JTextField addrField;
@@ -68,16 +70,24 @@ public class IntercomClient {
 		btnConnect.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if (as == null) {
+				if (as == null||is == null) {
 					as = new AudioSender(addrField.getText());
 					ast = new Thread(as);
 					ast.start();
+					is = new InformationSocket(addrField.getText());
+					ist = new Thread(is);
+					ist.start();
 					btnSpeak.setEnabled(true);
 					btnConnect.setText("Disconnect");
 				} else if (as.isDisconnected()) {
 					as = new AudioSender(addrField.getText());
 					ast = new Thread(as);
 					ast.start();
+					//audio sender start
+					is = new InformationSocket(addrField.getText());
+					ist = new Thread(is);
+					ist.start();
+					//information socket start
 					btnSpeak.setEnabled(true);
 					btnConnect.setText("Disconnect");
 				} else {
