@@ -18,6 +18,7 @@ public class IntercomClient {
 	private JFrame frame;
 	private JTextField addrField;
 	private JButton btnSpeak;
+	private JButton btnDisconnect;
 
 	/**
 	 * Launch the application.
@@ -71,6 +72,15 @@ public class IntercomClient {
 			}
 		});
 		panel.add(btnConnect);
+		
+		btnDisconnect = new JButton("Disconnect");
+		btnDisconnect.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				as.disconnect();
+			}
+		});
+		panel.add(btnDisconnect);
 		
 		btnSpeak = new JButton("Speak");
 		btnSpeak.addMouseListener(new MouseAdapter() {
