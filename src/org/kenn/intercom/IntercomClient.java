@@ -1,7 +1,6 @@
 package org.kenn.intercom;
-import java.awt.EventQueue;
-import java.util.Scanner;
 
+import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -10,15 +9,21 @@ import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.FlowLayout;
+import javax.swing.JLabel;
 
 public class IntercomClient {
 	AudioSender as;
 	Thread ast;
-	
+
 	private JFrame frame;
 	private JTextField addrField;
 	private JButton btnSpeak;
-	private JButton btnDisconnect;
+	private JPanel panelSouth;
+	private JButton btnConnect;
+	private JPanel panelMain;
+	private JPanel panelSpeak;
+	private JPanel panelStatus;
+	private JLabel lblStatus;
 
 	/**
 	 * Launch the application.
@@ -40,8 +45,6 @@ public class IntercomClient {
 	 * Create the application.
 	 */
 	public IntercomClient() {
-		Scanner in = new Scanner(System.in);
-		
 		initialize();
 	}
 
@@ -52,49 +55,73 @@ public class IntercomClient {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		JPanel panel = new JPanel();
-		frame.getContentPane().add(panel, BorderLayout.NORTH);
-		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+
+		JPanel panelConnection = new JPanel();
+		frame.getContentPane().add(panelConnection, BorderLayout.NORTH);
+		panelConnection.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+
 		addrField = new JTextField();
-		panel.add(addrField);
+		panelConnection.add(addrField);
 		addrField.setColumns(10);
-		
-		JButton btnConnect = new JButton("Connect");
+
+		btnConnect = new JButton("Connect");
 		btnConnect.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				as = new AudioSender(addrField.getText());
+				if (as == null) {
+					as = new AudioSender(addrField.getText());
+					ast = new Thread(as);
+					ast.start();
+					btnSpeak.setEnabled(true);
+					btnConnect.setText("Disconnect");
+				} else if (as.isDisconnected()) {
+					as = new AudioSender(addrField.getText());
+					ast = new Thread(as);
+					ast.start();
+					btnSpeak.setEnabled(true);
+					btnConnect.setText("Disconnect");
+				} else {
+					as.disconnect();
+					btnSpeak.setEnabled(false);
+					btnConnect.setText("Connect");
+				}
+
+			}
+		});
+		panelConnection.add(btnConnect);
+
+		panelSouth = new JPanel();
+		frame.getContentPane().add(panelSouth, BorderLayout.SOUTH);
+				panelSouth.setLayout(new BorderLayout(0, 0));
 				
-				ast = new Thread(as);
-				ast.start();
-			}
-		});
-		panel.add(btnConnect);
-		
-		btnDisconnect = new JButton("Disconnect");
-		btnDisconnect.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				as.disconnect();
-			}
-		});
-		panel.add(btnDisconnect);
-		
-		btnSpeak = new JButton("Speak");
-		btnSpeak.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				as.setEnable(true);
+				panelSpeak = new JPanel();
+				panelSouth.add(panelSpeak, BorderLayout.NORTH);
+						panelSpeak.setLayout(new BorderLayout(0, 0));
 				
-			}
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				as.setEnable(false);
-			}
-		});
-		frame.getContentPane().add(btnSpeak, BorderLayout.CENTER);
+						btnSpeak = new JButton("Speak");
+						panelSpeak.add(btnSpeak);
+						btnSpeak.setEnabled(false);
+						btnSpeak.addMouseListener(new MouseAdapter() {
+							@Override
+							public void mousePressed(MouseEvent e) {
+								if (btnSpeak.isEnabled() && as != null) as.setEnable(true);
+							}
+
+							@Override
+							public void mouseReleased(MouseEvent e) {
+								if (as != null) as.setEnable(false);
+							}
+						});
+				
+				panelStatus = new JPanel();
+				panelSouth.add(panelStatus, BorderLayout.SOUTH);
+				panelStatus.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+				
+				lblStatus = new JLabel("Status");
+				panelStatus.add(lblStatus);
+		
+		panelMain = new JPanel();
+		frame.getContentPane().add(panelMain, BorderLayout.CENTER);
 	}
 
 }

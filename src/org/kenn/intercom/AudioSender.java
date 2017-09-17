@@ -6,7 +6,7 @@ import java.net.*;
 
 public class AudioSender implements Runnable {
 
-	private AudioFormat format = new AudioFormat(8000.0f, 8, 1, true, false);
+	private AudioFormat format = new AudioFormat(8000.0f, 16, 1, true, false);
 	private DatagramPacket dgp;
 	private TargetDataLine microphone;
 	private int numBytesRead;
@@ -56,6 +56,10 @@ public class AudioSender implements Runnable {
 		disconnect = true;
 		speak = false;
 	}
+	
+	public boolean isDisconnected() {
+		return disconnect;
+	}
 
 	@Override
 	public void run() {
@@ -74,6 +78,7 @@ public class AudioSender implements Runnable {
 					break;
 				}
 			}
+			microphone.close();
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
